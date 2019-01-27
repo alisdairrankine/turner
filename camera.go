@@ -16,7 +16,7 @@ type Camera struct {
 	LensRadius float64
 }
 
-func NewCamera(lookfrom, lookat, vUp Vec3, vfov, aspect, aperture, focusDistance float64) *Camera {
+func NewCamera(lookfrom, lookat, vUp Vec3, vfov, aspect, aperture, focusDistance float64) Camera {
 	lensRadius := aperture / 2
 	theta := vfov * math.Pi / 180
 	halfHeight := math.Tan(theta / 2)
@@ -28,7 +28,7 @@ func NewCamera(lookfrom, lookat, vUp Vec3, vfov, aspect, aperture, focusDistance
 	lowerLeft := origin.Minus(u.MultiplyScalar(halfWidth * focusDistance)).Minus(v.MultiplyScalar(halfHeight * focusDistance)).Minus(w.MultiplyScalar(focusDistance))
 	horizontal := u.MultiplyScalar(2 * halfWidth * focusDistance)
 	vertical := v.MultiplyScalar(2 * halfHeight * focusDistance)
-	return &Camera{
+	return Camera{
 		LowerLeft:  lowerLeft,
 		Horizontal: horizontal,
 		Vertical:   vertical,
