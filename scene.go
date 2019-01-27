@@ -1,16 +1,16 @@
 package turner
 
-type HitList struct {
+type Scene struct {
 	Hitables []Hitable
 }
 
-func NewHitList(hitables ...Hitable) HitList {
-	return HitList{
+func NewScene(hitables ...Hitable) Scene {
+	return Scene{
 		Hitables: hitables,
 	}
 }
 
-func (h HitList) Hit(ray *Ray, tMin, tMax float64) (*HitRecord, bool) {
+func (h Scene) Hit(ray *Ray, tMin, tMax float64) (*HitRecord, bool) {
 	var rec *HitRecord
 	hit := false
 	closest := tMax

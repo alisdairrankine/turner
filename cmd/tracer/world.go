@@ -49,5 +49,5 @@ func bigWorld() turner.Hitable {
 	scene = append(scene, geometry.Sphere{turner.Vec3{0, 1, 0}, 1, material.Dielectric(1.5)},
 		geometry.Sphere{turner.Vec3{-4, 1, 0}, 1, material.Diffuse(turner.Vec3{0.4, 0.2, 0.1})},
 		geometry.Sphere{turner.Vec3{4, 1, 0}, 1, material.Metal(turner.Vec3{0.7, 0.6, 0.5}, 0)})
-	return turner.NewHitList(scene...)
+	return turner.NewScene(scene...)
 }
