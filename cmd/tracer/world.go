@@ -4,12 +4,13 @@ import (
 	"math/rand"
 
 	"github.com/alisdairrankine/turner"
+	"github.com/alisdairrankine/turner/geometry"
 	"github.com/alisdairrankine/turner/material"
 )
 
 func bigWorld() turner.Hitable {
 	scene := []turner.Hitable{}
-	scene = append(scene, turner.Sphere{turner.Vec3{X: 0, Y: -1000, Z: 0}, 1000, material.Diffuse(turner.Vec3{X: 0.5, Y: 0.5, Z: 0.5})})
+	scene = append(scene, geometry.Sphere{turner.Vec3{X: 0, Y: -1000, Z: 0}, 1000, material.Diffuse(turner.Vec3{X: 0.5, Y: 0.5, Z: 0.5})})
 	for a := -11; a < 11; a++ {
 		for b := -11; b < 11; b++ {
 			chooseMat := rand.Float64()
@@ -40,13 +41,13 @@ func bigWorld() turner.Hitable {
 					mat = material.Dielectric(1.5)
 				}
 				scene = append(scene,
-					turner.Sphere{centre, 0.2, mat},
+					geometry.Sphere{centre, 0.2, mat},
 				)
 			}
 		}
 	}
-	scene = append(scene, turner.Sphere{turner.Vec3{0, 1, 0}, 1, material.Dielectric(1.5)},
-		turner.Sphere{turner.Vec3{-4, 1, 0}, 1, material.Diffuse(turner.Vec3{0.4, 0.2, 0.1})},
-		turner.Sphere{turner.Vec3{4, 1, 0}, 1, material.Metal(turner.Vec3{0.7, 0.6, 0.5}, 0)})
+	scene = append(scene, geometry.Sphere{turner.Vec3{0, 1, 0}, 1, material.Dielectric(1.5)},
+		geometry.Sphere{turner.Vec3{-4, 1, 0}, 1, material.Diffuse(turner.Vec3{0.4, 0.2, 0.1})},
+		geometry.Sphere{turner.Vec3{4, 1, 0}, 1, material.Metal(turner.Vec3{0.7, 0.6, 0.5}, 0)})
 	return turner.NewHitList(scene...)
 }

@@ -1,20 +1,24 @@
-package turner
+package geometry
 
-import "math"
+import (
+	"math"
+
+	"github.com/alisdairrankine/turner"
+)
 
 type Sphere struct {
-	Centre Vec3
+	Centre turner.Vec3
 	Radius float64
-	Mat    Material
+	Mat    turner.Material
 }
 
-func (s Sphere) Hit(ray *Ray, tMin, tMax float64) (*HitRecord, bool) {
+func (s Sphere) Hit(ray *turner.Ray, tMin, tMax float64) (*turner.HitRecord, bool) {
 	oc := ray.Origin.Minus(s.Centre)
 	a := ray.Direction.Dot(ray.Direction)
 	b := oc.Dot(ray.Direction)
 	c := oc.Dot(oc) - (s.Radius * s.Radius)
 	discriminant := (b * b) - (a * c)
-	rec := &HitRecord{Mat: s.Mat}
+	rec := &turner.HitRecord{Mat: s.Mat}
 	if discriminant > 0 {
 		temp := (-b - math.Sqrt(b*b-a*c)) / a
 		if temp < tMax && temp > tMin {
