@@ -69,3 +69,15 @@ func (v Vec3) Colour() color.Color {
 func (v Vec3) Reflect(normal Vec3) Vec3 {
 	return v.Minus(normal.MultiplyScalar(v.Dot(normal) * 2))
 }
+
+func (v Vec3) Refract(normal Vec3, niOverNt float64) (bool, Vec3) {
+	uv := v.UnitVector()
+	refracted := Vec3{}
+	dt := uv.Dot(normal)
+	discriminant := 1.0 - niOverNt*niOverNt*(1-dt*dt)
+	if discriminant > 0 {
+		refracted = uv.Minus(normal.MultiplyScalar(dt)).MultiplyScalar(niOverNt).Minus(normal.MultiplyScalar(math.Sqrt(discriminant)))
+		return true, refracted
+	}
+	return false, refracted
+}

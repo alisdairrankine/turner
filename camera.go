@@ -2,7 +2,6 @@ package turner
 
 import (
 	"math"
-	"math/rand"
 )
 
 type Camera struct {
@@ -41,22 +40,10 @@ func NewCamera(lookfrom, lookat, vUp Vec3, vfov, aspect, aperture, focusDistance
 }
 
 func (c *Camera) Ray(u, v float64) Ray {
-	rd := randomPointInUnitDisc().MultiplyScalar(c.LensRadius)
+	rd := RandomPointInUnitDisc().MultiplyScalar(c.LensRadius)
 	offset := c.U.MultiplyScalar(rd.X).Add(c.V.MultiplyScalar(rd.Y))
 	return Ray{
 		c.Origin.Add(offset),
 		c.LowerLeft.Add(c.Horizontal.MultiplyScalar(u)).Add(c.Vertical.MultiplyScalar(v)).Minus(c.Origin).Minus(offset),
 	}
-}
-
-func randomPointInUnitDisc() Vec3 {
-	p := Vec3{}
-	for {
-		p = Vec3{rand.Float64(), rand.Float64(), 0.0}.MultiplyVector(Vec3{1, 1, 0}).MultiplyScalar(2)
-		if p.Dot(p) < 1 {
-			break
-		}
-	}
-	return p
-
 }

@@ -10,10 +10,10 @@ import (
 func main() {
 	rand.Seed(time.Now().Unix())
 
-	width := 200
-	height := 100
-	samples := 10
-	bounces := 10
+	width := 800
+	height := 600
+	samples := 100
+	bounces := 50
 
 	lookfrom := turner.Vec3{13, 2, 3}
 	lookat := turner.Vec3{0, 0, 0}
