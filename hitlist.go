@@ -1,4 +1,4 @@
-package geometry
+package turner
 
 type HitList struct {
 	Hitables []Hitable

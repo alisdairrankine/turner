@@ -3,39 +3,41 @@ package main
 import (
 	"fmt"
 	"image"
-	"image/color"
 	"image/png"
 	"math"
+	"math/rand"
 	"os"
+	"time"
 
-	"github.com/alisdairrankine/turner/geometry"
+	"github.com/alisdairrankine/turner"
 )
 
 func main() {
 	width := 500
 	height := 250
+	samples := 100
+	rand.Seed(time.Now().Unix())
 
 	img := image.NewRGBA(image.Rect(
 		0, 0, width, height,
 	))
 
-	lowerLeft := geometry.Vec3{-2.0, -1.0, -1.0}
-	horizontal := geometry.Vec3{4.0, 0.0, 0.0}
-	vertical := geometry.Vec3{0.0, 2.0, 0.0}
-	origin := geometry.Vec3{0.0, 0.0, 0.0}
-
+	camera := turner.DefaultCamera()
 	world := newWorld()
 
 	fmt.Println("starting raytrace")
 	for y := height - 1; y >= 0; y-- {
 		for x := 0; x < width; x++ {
-			u := float64(x) / float64(width)
-			v := float64(height-y) / float64(height)
-			ray := geometry.Ray{
-				origin,
-				lowerLeft.Add(horizontal.MultiplyScalar(u)).Add(vertical.MultiplyScalar(v)),
+			colour := turner.Vec3{0, 0, 0}
+			for s := 0; s < samples; s++ {
+				u := (float64(x) + rand.Float64()) / float64(width)
+				v := (float64(height-y) + rand.Float64()) / float64(height)
+				ray := camera.Ray(u, v)
+
+				colour = colour.Add(colourFromRay(ray, world))
+
 			}
-			img.Set(x, y, colourFromRay(ray, world))
+			img.Set(x, y, colour.DivideScalar(float64(samples)).Colour())
 
 		}
 	}
@@ -46,22 +48,22 @@ func main() {
 	png.Encode(file, img)
 }
 
-func colourFromRay(ray geometry.Ray, world geometry.Hitable) color.Color {
+func colourFromRay(ray turner.Ray, world turner.Hitable) turner.Vec3 {
 	if hitRec, hit := world.Hit(&ray, 0, math.MaxFloat64); hit {
-		return geometry.Vec3{hitRec.Normal.X + 1, hitRec.Normal.Y + 1, hitRec.Normal.Z + 1}.MultiplyScalar(0.5).Colour()
+		return turner.Vec3{hitRec.Normal.X + 1, hitRec.Normal.Y + 1, hitRec.Normal.Z + 1}.MultiplyScalar(0.5)
 	}
 
 	unitDir := ray.Direction.UnitVector()
 	t := 0.5 * (unitDir.Y + 1)
-	vec1 := geometry.Vec3{1, 1, 1}
-	vec2 := geometry.Vec3{0.5, 0.7, 1.0}
+	vec1 := turner.Vec3{1, 1, 1}
+	vec2 := turner.Vec3{0.5, 0.7, 1.0}
 	colour := vec1.MultiplyScalar(1.0 - t).Add(vec2.MultiplyScalar(t))
-	return colour.Colour()
+	return colour
 }
 
-func newWorld() geometry.Hitable {
-	return geometry.NewHitList(
-		geometry.Sphere{geometry.Vec3{0, -100.5, -1}, 100},
-		geometry.Sphere{geometry.Vec3{0, 0, -1}, 0.5},
+func newWorld() turner.Hitable {
+	return turner.NewHitList(
+		turner.Sphere{turner.Vec3{0, -100.5, -1}, 100},
+		turner.Sphere{turner.Vec3{0, 0, -1}, 0.5},
 	)
 }

@@ -1,4 +1,4 @@
-package geometry
+package turner
 
 type Hitable interface {
 	Hit(r *Ray, tMin, tMax float64) (*HitRecord, bool)
