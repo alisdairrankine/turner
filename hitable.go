@@ -8,4 +8,5 @@ type HitRecord struct {
 	T      float64
 	P      Vec3
 	Normal Vec3
+	Mat    Material
 }

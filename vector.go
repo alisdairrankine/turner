@@ -65,3 +65,7 @@ func (v Vec3) Colour() color.Color {
 		255,
 	}
 }
+
+func (v Vec3) Reflect(normal Vec3) Vec3 {
+	return v.Minus(normal.MultiplyScalar(v.Dot(normal) * 2))
+}

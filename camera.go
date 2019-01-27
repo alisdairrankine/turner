@@ -1,29 +1,62 @@
 package turner
 
+import (
+	"math"
+	"math/rand"
+)
+
 type Camera struct {
-	LowerLeftCorner Vec3
-	Horizontal      Vec3
-	Vertical        Vec3
-	Origin          Vec3
+	LowerLeft  Vec3
+	Horizontal Vec3
+	Vertical   Vec3
+	Origin     Vec3
+	U          Vec3
+	V          Vec3
+	W          Vec3
+	LensRadius float64
 }
 
-func DefaultCamera() *Camera {
-
-	lowerLeft := Vec3{-2.0, -1.0, -1.0}
-	horizontal := Vec3{4.0, 0.0, 0.0}
-	vertical := Vec3{0.0, 2.0, 0.0}
-	origin := Vec3{0.0, 0.0, 0.0}
+func NewCamera(lookfrom, lookat, vUp Vec3, vfov, aspect, aperture, focusDistance float64) *Camera {
+	lensRadius := aperture / 2
+	theta := vfov * math.Pi / 180
+	halfHeight := math.Tan(theta / 2)
+	halfWidth := aspect * halfHeight
+	origin := lookfrom
+	w := lookfrom.Minus(lookat).UnitVector()
+	u := vUp.Cross(w).UnitVector()
+	v := w.Cross(u)
+	lowerLeft := origin.Minus(u.MultiplyScalar(halfWidth * focusDistance)).Minus(v.MultiplyScalar(halfHeight * focusDistance)).Minus(w.MultiplyScalar(focusDistance))
+	horizontal := u.MultiplyScalar(2 * halfWidth * focusDistance)
+	vertical := v.MultiplyScalar(2 * halfHeight * focusDistance)
 	return &Camera{
-		lowerLeft,
-		horizontal,
-		vertical,
-		origin,
+		LowerLeft:  lowerLeft,
+		Horizontal: horizontal,
+		Vertical:   vertical,
+		Origin:     origin,
+		U:          u,
+		V:          v,
+		W:          w,
+		LensRadius: lensRadius,
 	}
 }
 
 func (c *Camera) Ray(u, v float64) Ray {
+	rd := randomPointInUnitDisc().MultiplyScalar(c.LensRadius)
+	offset := c.U.MultiplyScalar(rd.X).Add(c.V.MultiplyScalar(rd.Y))
 	return Ray{
-		c.Origin,
-		c.LowerLeftCorner.Add(c.Horizontal.MultiplyScalar(u)).Add(c.Vertical.MultiplyScalar(v)),
+		c.Origin.Add(offset),
+		c.LowerLeft.Add(c.Horizontal.MultiplyScalar(u)).Add(c.Vertical.MultiplyScalar(v)).Minus(c.Origin).Minus(offset),
 	}
+}
+
+func randomPointInUnitDisc() Vec3 {
+	p := Vec3{}
+	for {
+		p = Vec3{rand.Float64(), rand.Float64(), 0.0}.MultiplyVector(Vec3{1, 1, 0}).MultiplyScalar(2)
+		if p.Dot(p) < 1 {
+			break
+		}
+	}
+	return p
+
 }

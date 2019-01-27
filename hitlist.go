@@ -17,6 +17,7 @@ func (h HitList) Hit(ray *Ray, tMin, tMax float64) (*HitRecord, bool) {
 	for _, hitable := range h.Hitables {
 		if tempRec, isHit := hitable.Hit(ray, tMin, closest); isHit {
 			rec = tempRec
+			closest = tempRec.T
 			hit = true
 		}
 
