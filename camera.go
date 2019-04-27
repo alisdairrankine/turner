@@ -2,6 +2,7 @@ package turner
 
 import (
 	"math"
+	"math/rand"
 )
 
 type Camera struct {
@@ -13,9 +14,13 @@ type Camera struct {
 	V          Vec3
 	W          Vec3
 	LensRadius float64
+
+	//Timing for motion blur
+	T0 float64
+	T1 float64
 }
 
-func NewCamera(lookfrom, lookat, vUp Vec3, vfov, aspect, aperture, focusDistance float64) Camera {
+func NewCamera(lookfrom, lookat, vUp Vec3, vfov, aspect, aperture, focusDistance, t0, t1 float64) Camera {
 	lensRadius := aperture / 2
 	theta := vfov * math.Pi / 180
 	halfHeight := math.Tan(theta / 2)
@@ -36,14 +41,18 @@ func NewCamera(lookfrom, lookat, vUp Vec3, vfov, aspect, aperture, focusDistance
 		V:          v,
 		W:          w,
 		LensRadius: lensRadius,
+		T0:         t0,
+		T1:         t1,
 	}
 }
 
 func (c *Camera) Ray(u, v float64) Ray {
 	rd := RandomPointInUnitDisc().MultiplyScalar(c.LensRadius)
 	offset := c.U.MultiplyScalar(rd.X).Add(c.V.MultiplyScalar(rd.Y))
+	time := c.T0 + rand.Float64()*float64(c.T1-c.T0)
 	return Ray{
-		c.Origin.Add(offset),
-		c.LowerLeft.Add(c.Horizontal.MultiplyScalar(u)).Add(c.Vertical.MultiplyScalar(v)).Minus(c.Origin).Minus(offset),
+		Origin:    c.Origin.Add(offset),
+		Direction: c.LowerLeft.Add(c.Horizontal.MultiplyScalar(u)).Add(c.Vertical.MultiplyScalar(v)).Minus(c.Origin).Minus(offset),
+		Time:      time,
 	}
 }

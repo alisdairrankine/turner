@@ -39,12 +39,12 @@ func (d dielectric) Scatter(rayIn turner.Ray, hitRec *turner.HitRecord) (bool, t
 		reflectProb = schlick(cosine, d.refractiveIndex)
 	} else {
 		reflectProb = 1.0
-		scattered = turner.Ray{hitRec.P, reflected}
+		scattered = turner.Ray{hitRec.P, reflected, rayIn.Time}
 	}
 	if rand.Float64() < reflectProb {
-		scattered = turner.Ray{hitRec.P, reflected}
+		scattered = turner.Ray{hitRec.P, reflected, rayIn.Time}
 	} else {
-		scattered = turner.Ray{hitRec.P, refracted}
+		scattered = turner.Ray{hitRec.P, refracted, rayIn.Time}
 	}
 	return true, attenuation, scattered
 }

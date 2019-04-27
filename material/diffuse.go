@@ -15,6 +15,6 @@ func Diffuse(albedo turner.Vec3) turner.Material {
 func (l lambertian) Scatter(rayIn turner.Ray, hitRec *turner.HitRecord) (bool, turner.Vec3, turner.Ray) {
 
 	target := hitRec.P.Add(hitRec.Normal).Add(turner.RandomPointInUnitSphere())
-	bounce := turner.Ray{hitRec.P, target.Minus(hitRec.P)}
+	bounce := turner.Ray{hitRec.P, target.Minus(hitRec.P), rayIn.Time}
 	return true, l.albedo, bounce
 }

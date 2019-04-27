@@ -38,3 +38,7 @@ func (s Sphere) Hit(ray *turner.Ray, tMin, tMax float64) (*turner.HitRecord, boo
 
 	return rec, false
 }
+
+func (s Sphere) BoundingBox(t0, t1 float64) (*turner.AABB, bool) {
+	return &turner.AABB{Min: s.Centre.Minus(turner.Vec3{s.Radius, s.Radius, s.Radius}), Max: s.Centre.Add(turner.Vec3{s.Radius, s.Radius, s.Radius})}, true
+}

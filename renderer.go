@@ -42,7 +42,7 @@ func (r *Renderer) Render() {
 		0, 0, r.width, r.height,
 	))
 
-	fmt.Printf("starting raytrace: %d Photons ready\n", photonCount)
+	fmt.Printf("starting raytrace: %d rays ready\n", photonCount)
 	i := 0
 	fmt.Println()
 	for y := r.height - 1; y >= 0; y-- {
@@ -58,7 +58,7 @@ func (r *Renderer) Render() {
 				v := (float64(r.height-y) + rand.Float64()) / float64(r.height)
 				ray := r.camera.Ray(u, v)
 				wg.Add(1)
-				func(w *sync.WaitGroup, m *sync.Mutex) {
+				go func(w *sync.WaitGroup, m *sync.Mutex) {
 					defer w.Done()
 					c := r.rayColour(ray, r.world, 0)
 					m.Lock()
