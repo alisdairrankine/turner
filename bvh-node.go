@@ -21,6 +21,7 @@ func BVHNode(hitables []Hitable, time0, time1 float64) Hitable {
 		if box, ok := hit.BoundingBox(time0, time1); ok {
 			node.Box = box
 		}
+		return node
 	}
 
 	list := axisSort(hitables, int(3*rand.Float64()), time0, time1)
@@ -40,7 +41,7 @@ func BVHNode(hitables []Hitable, time0, time1 float64) Hitable {
 		panic("sort your boxes out")
 	}
 
-	return nil
+	return node
 }
 
 func axisSort(hitables []Hitable, axis int, time0, time1 float64) []Hitable {
